@@ -16,7 +16,7 @@
 #endif
 
 typedef struct{
-    float x, y, w, h;
+    float x, y, w, h;		//
 } box;
 
 typedef struct{
