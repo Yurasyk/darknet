@@ -143,10 +143,10 @@ box_label *read_boxes(char *filename, int *n)
 		printf("Can't open label file. \n");
 		file_error(filename);
 	}
-    float x, y, h, w, xs, ys, xf, yf;
+    float x, y, h, w;
     int id;
     int count = 0;
-    while(fscanf(file, "%d %f %f %f %f %f %f %f %f", &id, &x, &y, &w, &h, &xs, &ys, &xf, &yf) == 9){
+    while(fscanf(file, "%d %f %f %f %f", &id, &x, &y, &w, &h) == 5){
         boxes = realloc(boxes, (count+1)*sizeof(box_label));
         boxes[count].id = id;
         boxes[count].x = x;
@@ -157,10 +157,6 @@ box_label *read_boxes(char *filename, int *n)
         boxes[count].right  = x + w/2;
         boxes[count].top    = y - h/2;
         boxes[count].bottom = y + h/2;
-        boxes[count].xs = xs;
-        boxes[count].ys = ys;
-        boxes[count].xf = xf;
-        boxes[count].yf = yf;
         ++count;
     }
     fclose(file);
@@ -313,7 +309,7 @@ void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, 
 	randomize_boxes(boxes, count);
 	correct_boxes(boxes, count, dx, dy, sx, sy, flip);
 	if (count > num_boxes) count = num_boxes;
-	float x, y, w, h, xs, ys, xf, yf;
+	float x, y, w, h;
 	int id;
 
 	for (i = 0; i < count; ++i) {
@@ -322,10 +318,6 @@ void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, 
 		w = boxes[i].w;
 		h = boxes[i].h;
 		id = boxes[i].id;
-		xs = boxes[i].xs;
-		ys = boxes[i].ys;
-		xf = boxes[i].xf;
-		yf = boxes[i].yf;
 
 		// not detect small objects
 		//if ((w < 0.001F || h < 0.001F)) continue;
@@ -370,15 +362,11 @@ void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, 
 		if (x == 0) x += lowest_w;
 		if (y == 0) y += lowest_h;
 
-        truth[i*9+0] = x;
-        truth[i*9+1] = y;
-        truth[i*9+2] = w;
-        truth[i*9+3] = h;
-        truth[i*9+4] = xs;
-        truth[i*9+5] = ys;
-        truth[i*9+6] = xf;
-        truth[i*9+7] = yf;
-        truth[i*9+8] = id;
+        truth[i*5+0] = x;
+        truth[i*5+1] = y;
+        truth[i*5+2] = w;
+        truth[i*5+3] = h;
+        truth[i*5+4] = id;
     }
     free(boxes);
 }

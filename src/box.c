@@ -10,10 +10,6 @@ box float_to_box(float *f)
     b.y = f[1];
     b.w = f[2];
     b.h = f[3];
-    b.xs = f[4];
-    b.ys = f[5];
-    b.xf = f[6];
-    b.yf = f[7];
     return b;
 }
 
@@ -65,12 +61,6 @@ dbox derivative(box a, box b)
         d.dy = 1;
         d.dh = 0;
     }
-	
-	d.dxs=0;
-	d.dxf=0;
-	
-	d.dys=0;
-	d.dyf=0;
     return d;
 }
 
