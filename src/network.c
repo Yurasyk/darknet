@@ -200,7 +200,7 @@ void forward_network(network net, network_state state)
         if(l.delta){
             scal_cpu(l.outputs * l.batch, 0, l.delta, 1);
         }
-        l.forward(l, state);
+        l.forward(l, state);								// call forward function for every layer here
         state.input = l.output;
     }
 }

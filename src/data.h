@@ -73,6 +73,7 @@ typedef struct{
     int id;
     float x,y,w,h;
     float left, right, top, bottom;
+    float xs, ys, xf, yf;
 } box_label;
 
 void free_data(data d);

@@ -267,7 +267,7 @@ layer parse_yolo(list *options, size_params params)
 	int num = total;
 
 	char *a = option_find_str(options, "mask", 0);
-	int *mask = parse_yolo_mask(a, &num);
+	int *mask = parse_yolo_mask(a, &num);						// mask reading and setting num equal to current mask length
 	int max_boxes = option_find_int_quiet(options, "max", 90);
 	layer l = make_yolo_layer(params.batch, params.w, params.h, num, total, mask, classes, max_boxes);
 	if (l.outputs != params.inputs) {
@@ -296,9 +296,9 @@ layer parse_yolo(list *options, size_params params)
 		for (i = 0; i < len; ++i) {
 			if (a[i] == ',') ++n;
 		}
-		for (i = 0; i < n && i < total*2; ++i) {
+		for (i = 0; i < n && i < total*2; ++i) {	// reading (num * 2) anchor values
 			float bias = atof(a);
-			l.biases[i] = bias;
+			l.biases[i] = bias;						// reading of anchors
 			a = strchr(a, ',') + 1;
 		}
 	}
