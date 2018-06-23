@@ -47,7 +47,7 @@ layer make_yolo_layer(int batch, int w, int h, int n, int total, int *mask, int 
     }
 
     l.forward = forward_yolo_layer;			// an assignment, not actual execution here
-    l.backward = backward_yolo_layer;
+    l.backward = backward_yolo_layer;			// an assignment, not actual execution here
 #ifdef GPU
     l.forward_gpu = forward_yolo_layer_gpu;
     l.backward_gpu = backward_yolo_layer_gpu;
