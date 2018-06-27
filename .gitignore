@@ -4,7 +4,11 @@
 *.out
 *.png
 *.so
+*.kdev4
+.kdev4/
+tiny-yolo-voc.conv.13
 mnist/
+backup/
 data/
 caffe/
 grasp/
@@ -12,6 +16,7 @@ images/
 opencv/
 convnet/
 decaf/
+results/
 submission/
 cfg/
 darknet
