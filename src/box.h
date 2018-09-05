@@ -16,11 +16,11 @@
 #endif
 
 typedef struct{
-    float x, y, w, h;		//
+    float x, y, w, h, xc, yc;		//extended box structure
 } box;
 
 typedef struct{
-    float dx, dy, dw, dh;
+    float dx, dy, dw, dh, dxc, dyc;		//extended dbox structure
 } dbox;
 
 typedef struct detection {

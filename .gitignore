@@ -4,8 +4,8 @@
 *.out
 *.png
 *.so
-*.kdev4
-.kdev4/
+.vscode/
+nbproject/
 tiny-yolo-voc.conv.13
 mnist/
 backup/

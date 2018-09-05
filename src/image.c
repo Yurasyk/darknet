@@ -214,6 +214,63 @@ void draw_bbox(image a, box bbox, int w, float r, float g, float b)
     }
 }
 
+void draw_pointer(image a, int xcent, int ycent, int xptr, int yptr, float r, float g, float b)
+{
+    //normalize_image(a);
+    if(xcent < 0) xcent = 0;
+    if(xcent >= a.w) xcent = a.w-1;
+    if(xptr < 0) xptr = 0;
+    if(xptr >= a.w) xptr = a.w-1;
+
+    if(ycent < 0) ycent = 0;
+    if(ycent >= a.h) ycent = a.h-1;
+    if(yptr < 0) yptr = 0;
+    if(yptr >= a.h) yptr = a.h-1;
+
+    a.data[xptr + yptr*a.w + 0*a.w*a.h] = r;
+
+    a.data[xptr + yptr*a.w + 1*a.w*a.h] = g;
+
+    a.data[xptr + yptr*a.w + 2*a.w*a.h] = b;
+
+    // line painting
+    int x1 = xcent;
+    int y1 = ycent;
+    int x2 = xptr;
+    int y2 = yptr;
+    //int xstep = 1;
+    //int ystep = 1;
+    if (xcent>xptr){
+        x1 = xptr;
+        x2 = xcent;
+        //xstep = -1;
+    }
+    if (ycent>yptr){
+        y1 = yptr;
+        y2 = ycent;
+        //ystep = -1;
+    }
+
+    int i;
+    int yc;
+    for(i = x1; i < x2; ++i){
+        yc=round((i-xcent)*(yptr-ycent)/(xptr-xcent)+ycent);
+        a.data[i + yc*a.w + 0*a.w*a.h] = r;
+        a.data[i + yc*a.w + 1*a.w*a.h] = g;
+        a.data[i + yc*a.w + 2*a.w*a.h] = b;
+    }
+        
+    int j;
+    int xc;
+    for(j = y1; j < y2; ++j){
+        xc=round((j-ycent)*(xptr-xcent)/(yptr-ycent)+xcent);
+        a.data[xc + j*a.w + 0*a.w*a.h] = r;
+        a.data[xc + j*a.w + 1*a.w*a.h] = g;
+        a.data[xc + j*a.w + 2*a.w*a.h] = b;
+    }
+
+}
+
 image **load_alphabet()
 {
     int i, j;
@@ -334,11 +391,21 @@ void draw_detections_v3(image im, detection *dets, int num, float thresh, char *
 			int right = (b.x + b.w / 2.)*im.w;
 			int top = (b.y - b.h / 2.)*im.h;
 			int bot = (b.y + b.h / 2.)*im.h;
+            float norm_coef = sqrt(b.xc * b.xc + b.yc * b.yc);
+            int xcent = b.x * im.w;
+            int ycent = b.y * im.h;
+            int xptr = (b.x + b.w / 2.*b.xc/norm_coef)*im.w;
+            int yptr = (b.y - b.h / 2.*b.yc/norm_coef)*im.h;
 
 			if (left < 0) left = 0;
 			if (right > im.w - 1) right = im.w - 1;
 			if (top < 0) top = 0;
 			if (bot > im.h - 1) bot = im.h - 1;
+
+            if (xptr < 0) xptr = 0;
+			if (xptr > im.w - 1) xptr = im.w - 1;
+			if (yptr < 0) yptr = 0;
+			if (yptr > im.h - 1) yptr = im.h - 1;
 
 			//int b_x_center = (left + right) / 2;
 			//int b_y_center = (top + bot) / 2;
@@ -347,6 +414,7 @@ void draw_detections_v3(image im, detection *dets, int num, float thresh, char *
 			//sprintf(labelstr, "%d x %d - w: %d, h: %d", b_x_center, b_y_center, b_width, b_height);
 
 			draw_box_width(im, left, top, right, bot, width, red, green, blue);
+            draw_pointer(im, xcent, ycent, xptr, yptr, 1, 0, 0);
 			if (alphabet) {
 				char labelstr[4096] = { 0 };
 				strcat(labelstr, names[selected_detections[i].best_class]);

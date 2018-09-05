@@ -6,6 +6,9 @@
 #include "box.h"
 #include "demo.h"
 #include "option_list.h"
+#include <complex.h>
+
+#define PI 3.14159265358979323846
 
 #ifdef OPENCV
 #include "opencv2/highgui/highgui_c.h"
@@ -603,6 +606,7 @@ void validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float
 
 	//const float thresh_calc_avg_iou = 0.24;
 	float avg_iou = 0;
+	float avg_phase_error = 0;
 	int tp_for_thresh = 0;
 	int fp_for_thresh = 0;
 
@@ -687,8 +691,11 @@ void validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float
 
 						int truth_index = -1;
 						float max_iou = 0;
+						float current_phase_error = 0;
 						for (j = 0; j < num_labels; ++j)
 						{
+							float complex tc = truth[j].xc + truth[j].yc * I;
+							float complex detc;
 							box t = { truth[j].x, truth[j].y, truth[j].w, truth[j].h };
 							//printf(" IoU = %f, prob = %f, class_id = %d, truth[j].id = %d \n", 
 							//	box_iou(dets[i].bbox, t), prob, class_id, truth[j].id);
@@ -697,6 +704,10 @@ void validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float
 								if (current_iou > max_iou) {
 									max_iou = current_iou;
 									truth_index = unique_truth_count + j;
+									detc = dets[i].bbox.xc + dets[i].bbox.yc * I;
+									float tangle = fmod(carg(tc)+PI, 2*PI)- PI;
+									float dangle = fmod(carg(detc)+PI, 2*PI)- PI;
+									current_phase_error = abs(fmod(tangle - dangle + PI, 2 * PI)- PI);
 								}
 							}
 						}
@@ -728,6 +739,7 @@ void validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float
 
 							if(truth_index > -1 && found == 0) {
 								avg_iou += max_iou;
+								avg_phase_error += current_phase_error;
 								++tp_for_thresh;
 							}
 							else
@@ -755,9 +767,10 @@ void validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float
 		}
 	}
 
-	if((tp_for_thresh + fp_for_thresh) > 0)
+	if((tp_for_thresh + fp_for_thresh) > 0){
 		avg_iou = avg_iou / (tp_for_thresh + fp_for_thresh);
-
+		avg_phase_error = avg_phase_error / (tp_for_thresh + fp_for_thresh);
+	}
 	
 	// SORT(detections)
 	qsort(detections, detections_count, sizeof(box_prob), detections_comparator);
@@ -859,6 +872,7 @@ void validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float
 	mean_average_precision = mean_average_precision / classes;
 	printf("\n mean average precision (mAP) = %f, or %2.2f %% \n", mean_average_precision, mean_average_precision*100);
 
+	printf("\n average absolute phase error = %0.4f, rad\n", avg_phase_error);
 
 	for (i = 0; i < classes; ++i) {
 		free(pr[i]);

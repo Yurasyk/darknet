@@ -2,15 +2,15 @@ GPU=0
 CUDNN=0
 CUDNN_HALF=0
 OPENCV=0
-AVX=0
-OPENMP=0
+AVX=1
+OPENMP=1
 LIBSO=0
 
 # set GPU=1 and CUDNN=1 to speedup on GPU
 # set CUDNN_HALF=1 to further speedup 3 x times (Mixed-precision using Tensor Cores) on GPU Tesla V100, Titan V, DGX-2
 # set AVX=1 and OPENMP=1 to speedup on CPU (if error occurs then set AVX=0)
 
-DEBUG=0
+DEBUG=1
 
 ARCH= -gencode arch=compute_30,code=sm_30 \
       -gencode arch=compute_35,code=sm_35 \
@@ -26,7 +26,7 @@ OS := $(shell uname)
 # GTX 1080, GTX 1070, GTX 1060, GTX 1050, GTX 1030, Titan Xp, Tesla P40, Tesla P4
 # ARCH= -gencode arch=compute_61,code=sm_61 -gencode arch=compute_61,code=compute_61
 
-# GP100/Tesla P100 – DGX-1
+# GP100/Tesla P100 ï¿½ DGX-1
 # ARCH= -gencode arch=compute_60,code=sm_60
 
 # For Jetson Tx1 uncomment:
