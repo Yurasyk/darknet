@@ -5,7 +5,6 @@
 *.png
 *.so
 .vscode/
-nbproject/
 tiny-yolo-voc.conv.13
 mnist/
 backup/
